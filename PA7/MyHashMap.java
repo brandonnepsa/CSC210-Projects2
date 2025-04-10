@@ -1,13 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class MyHashMap<K,V>{
-    private ArrayList<K,V> buckets;
+    private ArrayList<HashNode<K,V>> buckets;
     private int numBuckets = 8;
     private int size = 0;
 
     public MyHashMap(K key, V value){
-        this.buckets = new ArrayList<>();
+        this.buckets = new ArrayList<>(numBuckets);
 
     }
 
@@ -18,13 +19,46 @@ public class MyHashMap<K,V>{
     }
 
     public V put(K key,V value){
-        //IDK what to do here
-        size++;
+        HashNode<K,V> input_node = new HashNode<>(key, value);
+        for (HashNode<K,V> node: buckets){
+            HashNode<K,V> curr = node;
+            while (curr != null){
+                if(curr.getKey().equals(input_node.getKey())){
+                    curr.setValue(value);
+                    return value;
+                }
+                curr = curr.getNext();
+                }
+        }
+        int hash_val = hash(key);
+        if (buckets.get(hash_val) != null){
+            input_node.setNext(buckets.get(hash_val));
+        }
+        buckets.add(hash_val, input_node);
+        size += 1;
+        return input_node.getValue();
     }
 
     public boolean remove(Object key, Object value){
-        //IDK what to do here
-        size--;
+        for (int i = 0; i < buckets.size(); i++){
+            HashNode<K,V> node = buckets.get(i);
+            if(node.getKey().equals(key) && node.getValue().equals(value)){
+                buckets.add(i, node.getNext());
+                return true;
+            }
+            HashNode<K,V> curr = node;
+            HashNode<K,V> prev = null;
+            while (curr != null){
+                if(curr.getKey().equals(key) && curr.getValue().equals(value) ){
+                    prev.setNext(curr.getNext());
+                    return true;
+                }
+                curr = curr.getNext();
+                prev = curr;
+            }
+        }
+        size -= 1;
+        return false;
     }
 
     public int size(){
@@ -35,8 +69,8 @@ public class MyHashMap<K,V>{
     }
 
     public boolean containsKey(K search_key){
-        for(K key: buckets){
-            if(key.equals(search_key)){
+        for(HashNode<K,V> node: buckets){
+            if(node.getKey().equals(search_key)){
                 return true;
             }
         }
@@ -44,42 +78,71 @@ public class MyHashMap<K,V>{
     }
 
     public boolean containsValue(V search_val){
-        for(K val: buckets){
-            if(val.equals(search_val)){
+        for(HashNode<K,V> node: buckets){
+            if(node.getValue().equals(search_val)){
                 return true;
             }
         }
         return false;
     }
 
-    public K get(K search_key){
-        for(K key: buckets){
-            if(key.equals(search_key)){
-                return key;
+    public V get(K search_key){
+        for(HashNode<K,V> node: buckets){
+            if(node.getKey().equals(search_key)){
+                return node.getValue();
             }
         }
         return null;
     }
 
     public boolean isEmpty(){
-        //IDK where to begin here 
+        for(HashNode<K,V> node: buckets){
+            if(node != null){
+                return false;
+            }
+        }
+        return true; 
     }
 
     public Set<K> keySet(){
-        //IDK where to begin here
+        Set<K> myKeySet = new HashSet<>();
+        for(HashNode<K,V> node: buckets){
+            myKeySet.add(node.getKey());
+        }
+        return myKeySet;
+    }
+
+    public Set<K> bucketKeySet(int i){
+        Set<K> bucketSet = new HashSet<>();
+        HashNode<K,V> curr = buckets.get(i);
+        while (curr != null){
+            bucketSet.add(curr.getKey());
+            curr = curr.getNext();
+        }
+        return bucketSet;
+    }
+
+    public int collisionCounter(int index){
+        int collisions = 0;
+        HashNode<K,V> curr = buckets.get(index);
+        while (curr != null){
+            collisions += 1;
+            curr = curr.getNext();
+        }
+        return collisions;
     }
 
     public void printTable(){
-        // IDK how to format this but this is what the output should be:
-        // Index 0: (0 conflicts), []
-        // Index 1: (0 conflicts), []
-        // Index 2: (0 conflicts), []
-        // Index 3: (0 conflicts), []
-        // Index 4: (0 conflicts), []
-        // Index 5: (0 conflicts), [ExampleKeyX, ]
-        // Index 6: (0 conflicts), [ExampleKeyY, ]
-        // Index 7: (0 conflicts), []
-        // Total # of conflicts: 0
-
+        String msg = "";
+        for(int i=0; i < buckets.size(); i++){
+            int collisions = collisionCounter(i);
+            Set<K> keySet = bucketKeySet(i);
+            String keys = "";
+            for(K key: keySet){
+                keys += key + ",";
+            }
+            msg += "Index " + i + ": (" + collisions + " conlficts), ["+keys+"]\n";
+        }
+        System.out.println(msg);
     }
 }
