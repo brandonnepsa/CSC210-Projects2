@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 public class MyHashMap<K,V>{
     private ArrayList<HashNode<K,V>> buckets;
@@ -126,8 +125,8 @@ public class MyHashMap<K,V>{
         return true; 
     }
 
-    public Set<K> keySet(){
-        Set<K> myKeySet = new HashSet<>();
+    public HashSet<K> keySet(){
+        HashSet<K> myKeySet = new HashSet<>();
         for(HashNode<K,V> node: buckets){
             myKeySet.add(node.getKey());
         }
