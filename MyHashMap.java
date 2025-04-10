@@ -46,19 +46,21 @@ public class MyHashMap<K,V>{
         return input_node.getValue();
     }
 
-    public boolean remove(Object key, Object value){
+    public V remove(Object key){
         for (int i = 0; i < buckets.size(); i++){
             HashNode<K,V> node = buckets.get(i);
             if(node != null) {
-            	if(node.getKey().equals(key) && node.getValue().equals(value)){
+            	if(node.getKey().equals(key){
+                    int val = node.getValue();
             		buckets.add(i, node.getNext());
             		size -= 1;
-            		return true;
+            		return val;
             	}
             	HashNode<K,V> curr = node;
             	HashNode<K,V> prev = null;
             	while (curr != null){
-            		if(curr.getKey().equals(key) && curr.getValue().equals(value) ){
+            		if(curr.getKey().equals(key)){
+                        int val = curr.getValue();
             			prev.setNext(curr.getNext());
             			size -= 1;
             			return true;
