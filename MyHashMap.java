@@ -134,37 +134,24 @@ public class MyHashMap<K,V>{
         return myKeySet;
     }
 
-    public Set<K> bucketKeySet(int i){
-        Set<K> bucketSet = new HashSet<>();
-        HashNode<K,V> curr = buckets.get(i);
-        while (curr != null){
-            bucketSet.add(curr.getKey());
-            curr = curr.getNext();
-        }
-        return bucketSet;
-    }
-
-    public int collisionCounter(int index){
-        int collisions = 0;
-        HashNode<K,V> curr = buckets.get(index);
-        while (curr != null){
-            collisions += 1;
-            curr = curr.getNext();
-        }
-        return collisions;
-    }
-
-    public void printTable(){
-        String msg = "";
-        for(int i=0; i < buckets.size(); i++){
-            int collisions = collisionCounter(i);
-            Set<K> keySet = bucketKeySet(i);
-            String keys = "";
-            for(K key: keySet){
-                keys += key + ",";
+    public void printTable() {
+        int totalConflicts = 0;
+        for (int i = 0; i < numBuckets; i++) {
+            HashNode<K, V> current = buckets.get(i);
+            ArrayList<K> keyList = new ArrayList<>();
+            int count = 0;
+            while (current != null) {
+                keyList.add(current.getKey());
+                current = current.getNext();
+                count++;
             }
-            msg += "Index " + i + ": (" + collisions + " conlficts), ["+keys+"]\n";
+            int conflicts = 0;
+            if (count > 1) {
+                conflicts = count - 1;
+            }
+            totalConflicts += conflicts;
+            System.out.println("Index " + i + ": (" + conflicts + " conflicts), " + keyList);
         }
-        System.out.println(msg);
+        System.out.println("Total # of conflicts: " + totalConflicts);
     }
 }
