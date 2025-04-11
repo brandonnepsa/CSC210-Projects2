@@ -63,7 +63,7 @@ public class MyHashMap<K,V>{
                         int val = curr.getValue();
             			prev.setNext(curr.getNext());
             			size -= 1;
-            			return true;
+            			return val;
             		}
             		curr = curr.getNext();
             		prev = curr;
@@ -71,7 +71,7 @@ public class MyHashMap<K,V>{
             }
         }
         size -= 1;
-        return false;
+        return null;
     }
 
     public int size(){
